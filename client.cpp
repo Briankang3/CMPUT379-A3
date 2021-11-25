@@ -1,5 +1,9 @@
 #include "util.h"
 #include "given.h"
+#include <cstdlib>
+#include <cerrno>
+#include <iostream>
+#include <cstdio>
 using namespace std;
 
 fstream output;
@@ -27,8 +31,8 @@ int main(int argc,char* argv[]){
 
     pid_t pid=getpid();
     string filename=hostname+to_string(pid);
-
-    output.open(filename,ios::out);
+    cout<<"file name is "<<filename<<'\n';
+    output.open(&filename[0],ios::out);
 
     output<<"Using port "<<port_num<<'\n';
     output<<"Using server address "<<ip_address<<'\n';
@@ -75,7 +79,13 @@ int main(int argc,char* argv[]){
             // wait for reply from the server
             int reply;
             int reply_size=recv(client_fd,&reply,4,0);
-            assert(reply_size==4);
+            if (reply_size!=4){
+                cout<<"reply_size=="<<reply_size<<'\n';
+                const char* buffer=hstrerror(errno); // get string message from errno, XSI-compliant version
+                cout<<"errono is "<<string(buffer)<<'\n';
+
+                abort();
+            }
 
             print_time();
             output<<"recv "<<"(D  "<<reply<<')'<<'\n';

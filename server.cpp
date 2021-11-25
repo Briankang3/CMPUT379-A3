@@ -107,9 +107,11 @@ int main(int argc,char* argv[]){
         int message;
         int read_size=recv(client_fd,&message,4,0);         // receives a message from the client
         print_time();
-
         output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
+
         Trans(message);
+
+        print_time();
         output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
         
         int write_size=write(client_fd,&num,4);         // send the message back to client
