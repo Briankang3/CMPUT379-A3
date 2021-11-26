@@ -114,7 +114,7 @@ int main(int argc,char* argv[]){
         print_time();
         output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
         
-        int write_size=write(client_fd,&num,4);         // send the message back to client
+        int write_size=send(client_fd,&num,4,0);         // send the message back to client
         assert(write_size==4);
 
         num++;      
