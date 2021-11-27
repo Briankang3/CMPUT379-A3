@@ -18,7 +18,7 @@ void print_time(){
 int main(int argc,char* argv[]){
     assert(argc==2);
 
-    uint16_t port_num;
+    uint32_t port_num;
     istringstream iss(argv[1]);
     iss>>port_num;
 
@@ -38,16 +38,8 @@ int main(int argc,char* argv[]){
 
     if (listen(listenfd,10)<0) perror("unable to listen");
 
-    timeval timeout;
-    timeout.tv_sec=30;
-    timeout.tv_usec=0;
-
     unsigned c=sizeof(sockaddr_in);
     int client_fd;
-
-    fd_set readfds;
-    FD_ZERO(&readfds);
-    FD_SET(listenfd,&readfds);
 
     pid_t pid;
     string hostname;
@@ -58,15 +50,29 @@ int main(int argc,char* argv[]){
 
     unordered_map<string,int> counts;       // counts the number of transactions for each client
 
-    int num=1;
+    uint32_t num=1;
     // start receiving message until no message is on the queue for more than 30 seconds
     while (1){
-        if (select(listenfd+1,&readfds,NULL,NULL,&timeout)>0){    // if an incoming message arrives within 30 seconds
+        timeval timeout;
+        timeout.tv_sec=20;
+        timeout.tv_usec=0;
+        
+        fd_set readfds;
+        FD_ZERO(&readfds);
+        FD_SET(listenfd,&readfds);
+
+        cout<<timeout.tv_sec<<"seconds remaining before\n";
+        int S=select(listenfd+1,&readfds,NULL,NULL,&timeout);
+        cout<<timeout.tv_sec<<"seconds remaining after\n";
+
+        if (S==-1) perror("failed to select");
+        
+        else if (S>0){    // if an incoming message arrives within 30 seconds
             // first get the hostname and pid of the client
             client_fd = accept(listenfd,(sockaddr*)&client_addr,&c);
             if (client_fd<0) perror("unable to accept message");
 
-            int read_size=recv(client_fd,&pid,sizeof(pid_t),0);
+            uint32_t read_size=recv(client_fd,&pid,sizeof(pid_t),0);
             assert(read_size==sizeof(pid_t));
 
             hostent *hostName;
@@ -80,6 +86,24 @@ int main(int argc,char* argv[]){
             hostname+=to_string(pid);
 
             counts[hostname]++;        // increment the count of the current client
+
+            // after getting the hostname and pid of the client
+            uint32_t message;
+            read_size=recv(client_fd,&message,4,0);         // receives a message from the client
+            print_time();
+            output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
+
+            Trans(message);
+
+            print_time();
+            output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
+            
+            cout<<num<<" is to be sent\n";
+            uint32_t write_size=send(client_fd,&num,sizeof(num),0);         // send the message back to client
+            cout<<num<<" was just sent"<<'\n';
+            assert(write_size==sizeof(num));
+
+            num++;
         }
 
         else{
@@ -95,29 +119,13 @@ int main(int argc,char* argv[]){
 
             for (auto i=counts.begin();i!=counts.end();i++) output<<i->second<<" transactions from "<<i->first<<"\n";
 
-            output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<'\n';
+            output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<')'<<'\n';
 
             // shut down the connection
             shutdown(listenfd,SHUT_RD);
             close(listenfd);
             break;
-        }
-
-        // after getting the hostname and pid of the client
-        int message;
-        int read_size=recv(client_fd,&message,4,0);         // receives a message from the client
-        print_time();
-        output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
-
-        Trans(message);
-
-        print_time();
-        output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
-        
-        int write_size=send(client_fd,&num,4,0);         // send the message back to client
-        assert(write_size==4);
-
-        num++;      
+        }      
     }    
     
     return 0;

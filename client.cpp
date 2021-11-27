@@ -21,7 +21,7 @@ void print_time(){
 int main(int argc,char* argv[]){
     assert(argc==3);
     
-    uint16_t port_num;
+    uint32_t port_num;
     string ip_address=(string)argv[2];
     istringstream iss(argv[1]);
     iss>>port_num;
@@ -51,9 +51,10 @@ int main(int argc,char* argv[]){
     string cmd;
     int count=0;
     while (cin>>cmd){
+        cout<<cmd<<" is to be executed\n";
         string sub=cmd.substr(1,cmd.size());
         istringstream iss(sub);
-        int to_write;
+        uint32_t to_write;
         iss>>to_write;
 
         if (cmd[0]=='S'){
@@ -66,7 +67,7 @@ int main(int argc,char* argv[]){
             count++;
 
             // first send the pid of the current client process
-            int write_size=send(client_fd,&pid,sizeof(pid_t),0);
+            uint32_t write_size=send(client_fd,&pid,sizeof(pid_t),0);
             assert(write_size==sizeof(pid_t));
 
             // send the parameter for Trans()
@@ -77,15 +78,10 @@ int main(int argc,char* argv[]){
             assert(write_size==4);
 
             // wait for reply from the server
-            int reply;
-            int reply_size=recv(client_fd,&reply,4,0);
-            if (reply_size!=4){
-                cout<<"reply_size=="<<reply_size<<'\n';
-                const char* buffer=hstrerror(errno); // get string message from errno, XSI-compliant version
-                cout<<"errono is "<<string(buffer)<<'\n';
-
-                abort();
-            }
+            uint32_t reply;
+            uint32_t reply_size=recv(client_fd,&reply,sizeof(reply),0);
+            cout<<"sizeof(reply_size)=="<<sizeof(reply_size)<<"  reply=="<<reply<<'\n';
+            assert(sizeof(reply_size)==sizeof(uint32_t));
 
             print_time();
             output<<"recv "<<"(D  "<<reply<<')'<<'\n';
