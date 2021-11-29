@@ -1,0 +1,19 @@
+.TH Demo "November 2021"
+.SH NAME
+This is a demostration client-server architecture
+.SH SYNOPSIS
+client [ port  ip ]
+server [port]
+.SH DESCRIPTION
+client sends requests for transactions.
+server accepts requests and process the transactions.
+.SS Arguments
+.TP
+port
+This is the port number that requests will be sent to.
+.TP
+ip
+This is the ip address of the server.
+.SH FILES
+.TP
+source files are client.cpp and server.cpp

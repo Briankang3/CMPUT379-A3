@@ -1,4 +1,4 @@
-all: server client
+all: server client MAN
 
 server: server.o given.o
 	g++ -O server.o given.o -o server
@@ -14,3 +14,7 @@ client.o: client.cpp given.h util.h
 
 given.o: given.cpp given.h
 	g++ -O -c given.cpp -std=c++2a
+
+MAN: this.man
+	groff -Tascii -man this.man | install /dev/stdin man.txt
+	libreoffice --convert-to "pdf" man.txt
