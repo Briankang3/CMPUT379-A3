@@ -13,5 +13,6 @@
 #include <sys/time.h>
 #include <netdb.h>
 #include <iomanip>
+#include <cstdint>
 
 #endif
