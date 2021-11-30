@@ -1,4 +1,4 @@
-#include "given.h"
+ #include "given.h"
 #include "util.h"
 #include <unordered_map>
 using namespace std;
@@ -34,11 +34,11 @@ int main(int argc,char* argv[]){
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     serv_addr.sin_port=htons(port_num);
 
-    if (bind(listenfd,(sockaddr*)&serv_addr,sizeof(serv_addr))<0) perror("failed to bind");
+    if (bind(listenfd,(sockaddr*)&serv_addr,sizeof(serv_addr))<0) perror("failed to bind");     // binds the socket with the ip address
 
     if (listen(listenfd,10)<0) perror("unable to listen");
 
-    unsigned c=sizeof(sockaddr_in);
+    uint32_t c=sizeof(sockaddr_in);
     int client_fd;
 
     pid_t pid;
@@ -53,6 +53,7 @@ int main(int argc,char* argv[]){
     uint32_t num=1;
     // start receiving message until no message is on the queue for more than 30 seconds
     while (1){
+        /*
         timeval timeout;
         timeout.tv_sec=20;
         timeout.tv_usec=0;
@@ -64,17 +65,20 @@ int main(int argc,char* argv[]){
         cout<<timeout.tv_sec<<"seconds remaining before\n";
         int S=select(listenfd+1,&readfds,NULL,NULL,&timeout);
         cout<<timeout.tv_sec<<"seconds remaining after\n";
-
+        */
+        int S=1;
         if (S==-1) perror("failed to select");
         
         else if (S>0){    // if an incoming message arrives within 30 seconds
             // first get the hostname and pid of the client
-            client_fd = accept(listenfd,(sockaddr*)&client_addr,&c);
+            cout<<"start of a new iteration\n";
+            client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
             if (client_fd<0) perror("unable to accept message");
+            cout<<"accepted a new request\n";
 
             uint32_t read_size=recv(client_fd,&pid,sizeof(pid_t),0);
             assert(read_size==sizeof(pid_t));
-
+            cout<<"received pid\n";
             hostent *hostName;
             in_addr ipv4addr;
             inet_pton(AF_INET,inet_ntoa(client_addr.sin_addr),&ipv4addr);
@@ -90,6 +94,7 @@ int main(int argc,char* argv[]){
             // after getting the hostname and pid of the client
             uint32_t message;
             read_size=recv(client_fd,&message,4,0);         // receives a message from the client
+            cout<<"received message\n";
             print_time();
             output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
 
@@ -102,7 +107,7 @@ int main(int argc,char* argv[]){
             uint32_t write_size=send(client_fd,&num,sizeof(num),0);         // send the message back to client
             cout<<num<<" was just sent"<<'\n';
             assert(write_size==sizeof(num));
-
+            cout<<"end of an iteration\n";
             num++;
         }
 

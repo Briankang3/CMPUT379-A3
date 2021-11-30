@@ -69,22 +69,21 @@ int main(int argc,char* argv[]){
             // first send the pid of the current client process
             uint32_t write_size=send(client_fd,&pid,sizeof(pid_t),0);
             assert(write_size==sizeof(pid_t));
-
+            cout<<"sent pid\n";
             // send the parameter for Trans()
             print_time();
             output<<"send "<<"(T  "<<to_write<<')'<<'\n';
 
             write_size=send(client_fd,&to_write,4,0);
             assert(write_size==4);
-
+            cout<<"sent message\n";
             // wait for reply from the server
             uint32_t reply;
             uint32_t reply_size=recv(client_fd,&reply,sizeof(reply),0);
-            cout<<"sizeof(reply_size)=="<<sizeof(reply_size)<<"  reply=="<<reply<<'\n';
             assert(sizeof(reply_size)==sizeof(uint32_t));
-
+            
             print_time();
-            output<<"recv "<<"(D  "<<reply<<')'<<'\n';
+            cout<<"recv "<<"(D  "<<reply<<')'<<'\n';
         }
     }
 
