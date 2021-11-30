@@ -1,21 +1,16 @@
 #include "util.h"
 #include "given.h"
-#include <cstdlib>
-#include <cerrno>
-#include <iostream>
-#include <cstdio>
 using namespace std;
 
 fstream output;
 
-void print_time(){
+float get_time(){
 
-    const auto p1=std::chrono::system_clock::now();
+    auto p1=std::chrono::system_clock::now();
     long long elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(p1.time_since_epoch()).count();
     float time=(float)elapsed/1000;
-    output<<fixed<<setprecision(2)<<time<<": ";
 
-    return;
+    return time;
 }
 
 int main(int argc,char* argv[]){
@@ -31,7 +26,6 @@ int main(int argc,char* argv[]){
 
     pid_t pid=getpid();
     string filename=hostname+to_string(pid);
-    cout<<"file name is "<<filename<<'\n';
     output.open(&filename[0],ios::out);
 
     output<<"Using port "<<port_num<<'\n';
@@ -51,12 +45,11 @@ int main(int argc,char* argv[]){
     string cmd;
     int count=0;
     while (cin>>cmd){
-        cout<<cmd<<" is to be executed\n";
         string sub=cmd.substr(1,cmd.size());
         istringstream iss(sub);
         uint32_t to_write;
         iss>>to_write;
-
+        
         if (cmd[0]=='S'){
             output<<"sleep "<<to_write<<" units\n";
 
@@ -66,26 +59,32 @@ int main(int argc,char* argv[]){
         else{
             count++;
 
-            // first send the pid of the current client process
+            // send the pid of the current client process
             uint32_t write_size=send(client_fd,&pid,sizeof(pid_t),0);
-            assert(write_size==sizeof(pid_t));
-            cout<<"sent pid\n";
+            while (write_size<sizeof(pid_t)) write_size+=send(client_fd,(char*)&pid+write_size,sizeof(pid_t)-write_size,0);
+
             // send the parameter for Trans()
-            print_time();
+            float time=get_time();
+            output<<fixed<<setprecision(2)<<time<<": ";
             output<<"send "<<"(T  "<<to_write<<')'<<'\n';
 
             write_size=send(client_fd,&to_write,4,0);
-            assert(write_size==4);
-            cout<<"sent message\n";
+            while (write_size<4) write_size+=send(client_fd,(char*)&to_write+write_size,4-write_size,0);
+
             // wait for reply from the server
             uint32_t reply;
             uint32_t reply_size=recv(client_fd,&reply,sizeof(reply),0);
-            assert(sizeof(reply_size)==sizeof(uint32_t));
+            while (reply_size<4) reply_size+=send(client_fd,(char*)&reply+reply_size,4-reply_size,0);
             
-            print_time();
-            cout<<"recv "<<"(D  "<<reply<<')'<<'\n';
+            time=get_time();
+            output<<fixed<<setprecision(2)<<time<<": ";
+            output<<"recv "<<"(D  "<<reply<<')'<<'\n';
         }
     }
+
+    pid=-1;
+    uint32_t write_size=send(client_fd,&pid,sizeof(pid_t),0);
+    while (write_size<sizeof(pid_t)) write_size+=send(client_fd,(char*)&pid+write_size,sizeof(pid_t)-write_size,0);
 
     output<<"Sent "<<count<<" transactions\n";
     shutdown(client_fd,SHUT_WR);

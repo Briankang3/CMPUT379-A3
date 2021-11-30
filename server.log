@@ -1,0 +1,20 @@
+using port 5000
+1638302336.00: # 1 (T 4) from localhost.5110
+1638302336.00: # 1 (Done) from localhost.5110
+1638302336.00: # 2 (T 2) from localhost.5110
+1638302336.00: # 2 (Done) from localhost.5110
+1638302336.00: # 3 (T 1) from localhost.5110
+1638302336.00: # 3 (Done) from localhost.5110
+1638302336.00: # 4 (T 1) from localhost.5110
+1638302336.00: # 4 (Done) from localhost.5110
+1638302336.00: # 5 (T 5) from localhost.5110
+1638302336.00: # 5 (Done) from localhost.5110
+1638302336.00: # 6 (T 1) from localhost.5110
+1638302336.00: # 6 (Done) from localhost.5110
+1638302336.00: # 7 (T 1) from localhost.5110
+1638302336.00: # 7 (Done) from localhost.5110
+1638302336.00: # 8 (T 1) from localhost.5110
+1638302336.00: # 8 (Done) from localhost.5110
+SUMMARY
+8 transactions from localhost.5110
+0.25 transactions/sec (8/31.52)
