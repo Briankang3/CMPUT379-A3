@@ -66,70 +66,72 @@ int main(int argc,char* argv[]){
         int S=select(listenfd+1,&readfds,NULL,NULL,&timeout);
         cout<<timeout.tv_sec<<"seconds remaining after\n";
         */
-        int S=1;
-        if (S==-1) perror("failed to select");
-        
-        else if (S>0){    // if an incoming message arrives within 30 seconds
-            // first get the hostname and pid of the client
-            cout<<"start of a new iteration\n";
-            client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
-            if (client_fd<0) perror("unable to accept message");
-            cout<<"accepted a new request\n";
-
-            uint32_t read_size=recv(client_fd,&pid,sizeof(pid_t),0);
-            assert(read_size==sizeof(pid_t));
-            cout<<"received pid\n";
-            hostent *hostName;
-            in_addr ipv4addr;
-            inet_pton(AF_INET,inet_ntoa(client_addr.sin_addr),&ipv4addr);
-            hostName=gethostbyaddr(&ipv4addr,sizeof(ipv4addr),AF_INET);
-
-            hostname=hostName->h_name;
-            // modify for the output format
-            hostname+='.';
-            hostname+=to_string(pid);
-
-            counts[hostname]++;        // increment the count of the current client
-
-            // after getting the hostname and pid of the client
-            uint32_t message;
-            read_size=recv(client_fd,&message,4,0);         // receives a message from the client
-            cout<<"received message\n";
-            print_time();
-            output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
-
-            Trans(message);
-
-            print_time();
-            output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
+        while (1){
+            int S=1;
+            if (S==-1) perror("failed to select");
             
-            cout<<num<<" is to be sent\n";
-            uint32_t write_size=send(client_fd,&num,sizeof(num),0);         // send the message back to client
-            cout<<num<<" was just sent"<<'\n';
-            assert(write_size==sizeof(num));
-            cout<<"end of an iteration\n";
-            num++;
-        }
+            else if (S>0){    // if an incoming message arrives within 30 seconds
+                // first get the hostname and pid of the client
+                cout<<"start of a new iteration\n";
+                client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
+                if (client_fd<0) perror("unable to accept message");
+                cout<<"accepted a new request\n";
 
-        else{
-            // no incoming messages within 30 seconds, prepare the close communication
-            // get the end time
-            s=std::chrono::system_clock::now();
-            long long end=std::chrono::duration_cast<std::chrono::milliseconds>(s.time_since_epoch()).count();
-            float elapsed=(float)(end-begin)/1000;
-            num--;
-            float average=(float)num/elapsed;
+                uint32_t read_size=recv(client_fd,&pid,sizeof(pid_t),0);
+                assert(read_size==sizeof(pid_t));
+                cout<<"received pid\n";
+                hostent *hostName;
+                in_addr ipv4addr;
+                inet_pton(AF_INET,inet_ntoa(client_addr.sin_addr),&ipv4addr);
+                hostName=gethostbyaddr(&ipv4addr,sizeof(ipv4addr),AF_INET);
 
-            output<<"SUMMARY\n";
+                hostname=hostName->h_name;
+                // modify for the output format
+                hostname+='.';
+                hostname+=to_string(pid);
 
-            for (auto i=counts.begin();i!=counts.end();i++) output<<i->second<<" transactions from "<<i->first<<"\n";
+                counts[hostname]++;        // increment the count of the current client
 
-            output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<')'<<'\n';
+                // after getting the hostname and pid of the client
+                uint32_t message;
+                read_size=recv(client_fd,&message,4,0);         // receives a message from the client
+                cout<<"received message\n";
+                print_time();
+                output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
 
-            // shut down the connection
-            shutdown(listenfd,SHUT_RD);
-            close(listenfd);
-            break;
+                Trans(message);
+
+                print_time();
+                output<<"# "<<num<<" (Done) from "<<hostname<<'\n';
+                
+                cout<<num<<" is to be sent\n";
+                uint32_t write_size=send(client_fd,&num,sizeof(num),0);         // send the message back to client
+                cout<<num<<" was just sent"<<'\n';
+                assert(write_size==sizeof(num));
+                cout<<"end of an iteration\n";
+                num++;
+            }
+
+            else{
+                // no incoming messages within 30 seconds, prepare the close communication
+                // get the end time
+                s=std::chrono::system_clock::now();
+                long long end=std::chrono::duration_cast<std::chrono::milliseconds>(s.time_since_epoch()).count();
+                float elapsed=(float)(end-begin)/1000;
+                num--;
+                float average=(float)num/elapsed;
+
+                output<<"SUMMARY\n";
+
+                for (auto i=counts.begin();i!=counts.end();i++) output<<i->second<<" transactions from "<<i->first<<"\n";
+
+                output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<')'<<'\n';
+
+                // shut down the connection
+                shutdown(listenfd,SHUT_RD);
+                close(listenfd);
+                break;
+            }
         }      
     }    
     
