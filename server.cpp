@@ -66,6 +66,9 @@ int main(int argc,char* argv[]){
         int S=select(listenfd+1,&readfds,NULL,NULL,&timeout);
         cout<<timeout.tv_sec<<"seconds remaining after\n";
         */
+        client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
+        if (client_fd<0) perror("unable to accept message");
+
         while (1){
             int S=1;
             if (S==-1) perror("failed to select");
@@ -73,8 +76,6 @@ int main(int argc,char* argv[]){
             else if (S>0){    // if an incoming message arrives within 30 seconds
                 // first get the hostname and pid of the client
                 cout<<"start of a new iteration\n";
-                client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
-                if (client_fd<0) perror("unable to accept message");
                 cout<<"accepted a new request\n";
 
                 uint32_t read_size=recv(client_fd,&pid,sizeof(pid_t),0);
