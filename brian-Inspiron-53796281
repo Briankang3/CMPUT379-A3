@@ -1,0 +1,22 @@
+Using port 5000
+Using server address 127.0.0.1
+Host brian-Inspiron-53796281
+1638318720.00: send (T  4)
+1638318720.00: recv (D  1)
+1638318720.00: send (T  2)
+1638318720.00: recv (D  2)
+1638318720.00: send (T  1)
+1638318720.00: recv (D  3)
+1638318720.00: send (T  1)
+1638318720.00: recv (D  4)
+sleep 9 units
+1638318720.00: send (T  5)
+1638318720.00: recv (D  5)
+sleep 1 units
+1638318720.00: send (T  1)
+1638318720.00: recv (D  6)
+1638318720.00: send (T  1)
+1638318720.00: recv (D  7)
+1638318720.00: send (T  1)
+1638318720.00: recv (D  8)
+Sent 8 transactions

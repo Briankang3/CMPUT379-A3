@@ -21,8 +21,8 @@ int main(int argc,char* argv[]){
     istringstream iss(argv[1]);
     iss>>port_num;
 
-    string hostname;
-    if (gethostname(&hostname[0],10)<0) perror("cannot obtain client host name");
+    char hostname[20];
+    if (gethostname(hostname,20)<0) cout<<"cannot obtain client hostname\n";
 
     pid_t pid=getpid();
     string filename=hostname+to_string(pid);
