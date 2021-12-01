@@ -1,16 +1,9 @@
 #include "given.h"
 #include "util.h"
 #include <unordered_map>
-#include <pthread.h>
-#include <csignal>
-#include <unistd.h>
+#include <poll.h>
+#include <vector>
 using namespace std;
-
-fstream output;
-int listenfd;
-unordered_map<string,int> counts;       // counts the number of transactions for each client
-long long start;
-uint32_t num=1;
 
 float get_time(){
 
@@ -21,43 +14,15 @@ float get_time(){
     return time;
 }
 
-void* timer(void* arg){
-    pid_t pid=*(pid_t*)arg;
-    
-    sleep(30);
-
-    kill(pid,SIGINT);
-
-    return nullptr;
-}
-
-void handler(int sig){
-    if (sig==SIGINT){
-        // no incoming messages within 30 seconds, prepare the close communication
-        // get the end time
-        auto s=std::chrono::system_clock::now();
-        long long end=std::chrono::duration_cast<std::chrono::milliseconds>(s.time_since_epoch()).count();
-        float elapsed=(float)(end-start)/1000;
-        num--;
-        float average=(float)num/elapsed;
-
-        output<<"SUMMARY\n";
-
-        for (auto i=counts.begin();i!=counts.end();i++) output<<i->second<<" transactions from "<<i->first<<"\n";
-
-        output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<')'<<'\n';
-
-        // shut down the connection
-        shutdown(listenfd,SHUT_RD);
-        close(listenfd);
-
-        exit(0);
-    }
-}
-
 int main(int argc,char* argv[]){
-    signal(SIGINT,handler);
-    
+    assert(argc==2);
+
+    fstream output;
+    int listenfd;
+    unordered_map<string,int> counts;       // counts the number of transactions for each client
+    long long start;
+    uint32_t num=1;
+
     uint32_t port_num;
     istringstream iss(argv[1]);
     iss>>port_num;
@@ -66,7 +31,7 @@ int main(int argc,char* argv[]){
 
     output<<"using port "<<port_num<<'\n';
 
-    listenfd=socket(AF_INET,SOCK_STREAM,0);
+    listenfd=socket(AF_INET,SOCK_STREAM | SOCK_NONBLOCK,0);
     if (listenfd<0) perror("failed to create a socket");
 
     sockaddr_in serv_addr,client_addr;
@@ -87,11 +52,50 @@ int main(int argc,char* argv[]){
     // get the starting time
     auto s=std::chrono::system_clock::now();
     start=std::chrono::duration_cast<std::chrono::milliseconds>(s.time_since_epoch()).count();
+
+    vector<pollfd> fds;
+    nfds_t nfds=0;        // number of established connections
+    int timeout=30000;    // 30 seconds
     
-    pthread_t t;
     while (1){
         client_fd = accept(listenfd,(sockaddr*)&client_addr,(socklen_t*)&c);
-        if (num>1) pthread_kill(t,SIGKILL);
+        if (client_fd>0){
+            pollfd temp;
+            temp.events=POLLIN;
+            temp.fd=client_fd;
+
+            nfds++;
+            fds.push_back(temp);
+        }
+
+        int ret=poll(&fds[0],nfds,timeout);
+        if (ret<0) perror("failed at poll()");
+
+        else if (ret==0){
+            // no incoming message within 30 seconds
+            // get the end time
+            auto s=std::chrono::system_clock::now();
+            long long end=std::chrono::duration_cast<std::chrono::milliseconds>(s.time_since_epoch()).count();
+            float elapsed=(float)(end-start)/1000;
+            num--;
+            float average=(float)num/elapsed;
+
+            output<<"SUMMARY\n";
+
+            for (auto i=counts.begin();i!=counts.end();i++) output<<i->second<<" transactions from "<<i->first<<"\n";
+
+            output<<average<<" transactions/sec "<<'('<<num<<'/'<<elapsed<<')'<<'\n';
+
+            // shut down the connection
+            shutdown(listenfd,SHUT_RD);
+            close(listenfd);
+
+            break;
+        }
+
+        else{
+            
+        }
         
         // start receiving message until no message is on the queue for more than 30 seconds
         while (1){  
@@ -133,9 +137,6 @@ int main(int argc,char* argv[]){
             
             num++;
         }
-        
-        pid=getpid();
-        pthread_create(&t,nullptr,&timer,&pid);
     }  
     
     return 0;
