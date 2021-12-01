@@ -23,9 +23,10 @@ int main(int argc,char* argv[]){
 
     char hostname[20];
     if (gethostname(hostname,20)<0) cout<<"cannot obtain client hostname\n";
+    string host=(string)hostname+'.';
 
     pid_t pid=getpid();
-    string filename=hostname+to_string(pid);
+    string filename=host+to_string(pid);
     output.open(&filename[0],ios::out);
 
     output<<"Using port "<<port_num<<'\n';
