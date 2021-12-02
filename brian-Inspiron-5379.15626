@@ -1,0 +1,22 @@
+Using port 5000
+Using server address 127.0.0.1
+Host brian-Inspiron-5379.15626
+1638410475.75: send (T  4)
+1638410475.77: recv (D  1)
+1638410475.77: send (T  2)
+1638410475.78: recv (D  2)
+1638410475.78: send (T  1)
+1638410475.78: recv (D  3)
+1638410475.78: send (T  1)
+1638410475.79: recv (D  4)
+sleep 9 units
+1638410475.88: send (T  5)
+1638410475.89: recv (D  5)
+sleep 1 units
+1638410475.90: send (T  1)
+1638410475.90: recv (D  6)
+1638410475.90: send (T  1)
+1638410475.91: recv (D  7)
+1638410475.91: send (T  1)
+1638410475.91: recv (D  8)
+Sent 8 transactions

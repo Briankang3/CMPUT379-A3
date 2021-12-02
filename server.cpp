@@ -7,12 +7,12 @@
 using namespace std;
 
 // this function gets UNIX epoch time at the moment when it is called
-float get_time(){
-
+double get_time(){
+    
     auto p1=std::chrono::system_clock::now();
-    long long elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(p1.time_since_epoch()).count();
-    float time=(float)elapsed/1000;
-
+    double elapsed=std::chrono::duration_cast<std::chrono::milliseconds>(p1.time_since_epoch()).count();
+    double time=elapsed/1000;
+    
     return time;
 }
 
@@ -146,7 +146,7 @@ int main(int argc,char* argv[]){
                         read_size+=recv(FD.fd,(char*)&message+read_size,4-read_size,0);
                     }
                     
-                    float time=get_time();
+                    double time=get_time();
                     output<<fixed<<setprecision(2)<<time<<": ";
                     output<<"# "<<num<<" (T "<<message<<") from "<<hostname<<'\n';
 

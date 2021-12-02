@@ -1,37 +1,20 @@
-using port 5002
-1638393344.00: # 1 (T 4) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 1 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 2 (T 2) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 2 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 3 (T 1) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 3 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 4 (T 1) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 4 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 5 (T 5) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 5 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 6 (T 1) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 6 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 7 (T 1) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 7 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 8 (T 1) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 8 (Done) from um01.cs.ualberta.ca.1957934
-1638393344.00: # 9 (T 4) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 9 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 10 (T 2) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 10 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 11 (T 1) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 11 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 12 (T 1) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 12 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 13 (T 5) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 13 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 14 (T 1) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 14 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 15 (T 1) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 15 (Done) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 16 (T 1) from um01.cs.ualberta.ca.1957943
-1638393344.00: # 16 (Done) from um01.cs.ualberta.ca.1957943
+using port 5000
+1638410475.76: # 1 (T 4) from localhost.15626
+1638410475.77: # 1 (Done) from localhost.15626
+1638410475.77: # 2 (T 2) from localhost.15626
+1638410475.78: # 2 (Done) from localhost.15626
+1638410475.78: # 3 (T 1) from localhost.15626
+1638410475.78: # 3 (Done) from localhost.15626
+1638410475.78: # 4 (T 1) from localhost.15626
+1638410475.79: # 4 (Done) from localhost.15626
+1638410475.88: # 5 (T 5) from localhost.15626
+1638410475.89: # 5 (Done) from localhost.15626
+1638410475.90: # 6 (T 1) from localhost.15626
+1638410475.90: # 6 (Done) from localhost.15626
+1638410475.90: # 7 (T 1) from localhost.15626
+1638410475.91: # 7 (Done) from localhost.15626
+1638410475.91: # 8 (T 1) from localhost.15626
+1638410475.91: # 8 (Done) from localhost.15626
 SUMMARY
-8 transactions from um01.cs.ualberta.ca.1957943
-8 transactions from um01.cs.ualberta.ca.1957934
-0.49 transactions/sec (16/32.68)
+8 transactions from localhost.15626
+0.25 transactions/sec (8/32.17)
