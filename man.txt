@@ -1,25 +1,25 @@
-Demo(November 2021)                                        Demo(November 2021)
+Demo(November 2021)					   Demo(November 2021)
 
 
 
-NNAAMMEE
+NAME
        This is a demostration client-server architecture
 
-SSYYNNOOPPSSIISS
+SYNOPSIS
        client [ port  ip ] server [port]
 
-DDEESSCCRRIIPPTTIIOONN
-       client  sends  requests  for transactions.  server accepts requests and
+DESCRIPTION
+       client  sends  requests	for transactions.  server accepts requests and
        process the transactions.
 
-   AArrgguummeennttss
+   Arguments
        port   This is the port number that requests will be sent to.
 
        ip     This is the ip address of the server.
 
-FFIILLEESS
+FILES
        source files are client.cpp and server.cpp
 
 
 
-                                                           Demo(November 2021)
+							   Demo(November 2021)

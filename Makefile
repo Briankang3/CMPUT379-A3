@@ -16,5 +16,5 @@ given.o: given.cpp given.h
 	g++ -O -c given.cpp -std=c++2a
 
 MAN: this.man
-	groff -Tascii -man this.man | install /dev/stdin man.txt
+	groff -Tascii -man this.man | col -b > man.txt
 	libreoffice --convert-to "pdf" man.txt
