@@ -1,10 +1,10 @@
 all: server client MAN
 
 server: server.o given.o
-	g++ -O -pthread server.o given.o -o server
+	g++ -O server.o given.o -o server
 
 server.o: server.cpp given.h util.h
-	g++ -O -c -pthread server.cpp -std=c++2a
+	g++ -O -c server.cpp -std=c++2a
 
 client: client.o given.o
 	g++ -O client.o given.o -o client
